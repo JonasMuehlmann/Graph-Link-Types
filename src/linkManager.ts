@@ -459,8 +459,8 @@ export class LinkManager {
                     }
                     break;
                 default:
-                    //metadata is not a link, return null
-                    return null;
+                    //metadata is not a link
+                    break;
             }
         }
         return null;
