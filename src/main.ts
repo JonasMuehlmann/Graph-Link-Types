@@ -161,12 +161,9 @@ export default class GraphLinkTypesPlugin extends Plugin {
     
     waitForRenderer(): Promise<void> {
         return new Promise((resolve) => {
+			let checkInterval = 15000;
 			if (this.currentRendererIsLocalGraph) {
-				const checkInterval = 500;   // Interval in milliseconds to check for the renderer
-			} else {
-				// Start drawing after loading and positioning nodes is done
-				// Prevents extreme delay during initial load
-            	const checkInterval = 15000; // Interval in milliseconds to check for the renderer
+				 checkInterval = 500;   // Interval in milliseconds to check for the renderer
 			}
 			
             const intervalId = setInterval(() => {
