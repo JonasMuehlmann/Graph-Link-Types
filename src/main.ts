@@ -166,7 +166,7 @@ export default class GraphLinkTypesPlugin extends Plugin {
 			} else {
 				// Start drawing after loading and positioning nodes is done
 				// Prevents extreme delay during initial load
-            	const checkInterval = 10000; // Interval in milliseconds to check for the renderer
+            	const checkInterval = 15000; // Interval in milliseconds to check for the renderer
 			}
 			
             const intervalId = setInterval(() => {
