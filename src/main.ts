@@ -3,6 +3,8 @@ import { getAPI } from 'obsidian-dataview';
 import { ObsidianRenderer, ObsidianLink} from 'src/types';
 import { LinkManager } from 'src/linkManager';
 
+let openUpdateLoops = 0;
+
 export interface GraphLinkTypesPluginSettings {
     tagColors: boolean;
     tagNames: boolean;
@@ -72,11 +74,9 @@ export default class GraphLinkTypesPlugin extends Plugin {
     animationFrameId: number | null = null;
     linkManager = new LinkManager();
     indexReady = false;
-	openUpdateLoops = 0;
 
     // Lifecycle method called when the plugin is loaded
     async onload(): Promise<void> {
-        
         await this.loadSettings();
         this.addSettingTab(new GraphLinkTypesSettingTab(this.app, this));
 
@@ -141,6 +141,7 @@ export default class GraphLinkTypesPlugin extends Plugin {
         if (this.animationFrameId !== null) {
             cancelAnimationFrame(this.animationFrameId);
             this.animationFrameId = null;
+			openUpdateLoops -= 1;
         }
         await this.waitForRenderer();
         this.checkAndUpdateRenderer();
@@ -185,10 +186,10 @@ export default class GraphLinkTypesPlugin extends Plugin {
         this.linkManager.destroyMap(renderer);
 
 		// Prevent spawning thousands of redundant and parallel-running update loops
-		if (this.openLoops > 0) {
+		if (openUpdateLoops > 0) {
       		return;
     	}
-    	this.openLoops += 1;
+    	openUpdateLoops += 1;
 		
         // Call the function to update positions in the next animation frame.
         requestAnimationFrame(this.updatePositions.bind(this));
@@ -197,10 +198,9 @@ export default class GraphLinkTypesPlugin extends Plugin {
 
     // Function to continuously update the positions of text objects.
     updatePositions(): void {
-
         // Find the graph renderer in the workspace.
         if (!this.currentRenderer) {
-			this.openLoops -= 1;
+			openUpdateLoops -= 1;
             return;
         }
 
