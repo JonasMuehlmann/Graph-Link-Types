@@ -130,7 +130,7 @@ export default class GraphLinkTypesPlugin extends Plugin {
             // @ts-ignore
             const renderer = leaf.view.renderer;
             if (this.isObsidianRenderer(renderer)) {
-				this.currentRendererIsLocalGraph = true;
+				currentRendererIsLocalGraph = true;
                 return renderer;
             }
         }
@@ -161,7 +161,7 @@ export default class GraphLinkTypesPlugin extends Plugin {
     
     waitForRenderer(): Promise<void> {
         return new Promise((resolve) => {
-			if (this.currentRendererIsLocalGraph) {
+			if (currentRendererIsLocalGraph) {
 				const checkInterval = 500;   // Interval in milliseconds to check for the renderer
 			} else {
 				// Start drawing after loading and positioning nodes is done
