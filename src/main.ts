@@ -72,6 +72,7 @@ export default class GraphLinkTypesPlugin extends Plugin {
     animationFrameId: number | null = null;
     linkManager = new LinkManager();
     indexReady = false;
+	openUpdateLoops = 0;
 
     // Lifecycle method called when the plugin is loaded
     async onload(): Promise<void> {
@@ -183,6 +184,12 @@ export default class GraphLinkTypesPlugin extends Plugin {
         // Remove existing text from the graph.
         this.linkManager.destroyMap(renderer);
 
+		// Prevent spawning thousands of redundant and parallel-running update loops
+		if (this.openLoops > 0) {
+      		return;
+    	}
+    	this.openLoops += 1;
+		
         // Call the function to update positions in the next animation frame.
         requestAnimationFrame(this.updatePositions.bind(this));
     }
@@ -193,6 +200,7 @@ export default class GraphLinkTypesPlugin extends Plugin {
 
         // Find the graph renderer in the workspace.
         if (!this.currentRenderer) {
+			this.openLoops -= 1;
             return;
         }
 
